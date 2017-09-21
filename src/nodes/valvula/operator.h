@@ -30,7 +30,13 @@ typedef struct RiplValvulaOpParams {
     float outputLevel;
     float pan;
     // TODO: Replace this by a ratio/offset(Hz) system
+    // If on the operator will only take freq into account
+    // and disregard the midi note
+    //TODO bool lockedFrequency;
+    // Taken into account only if lockedFrequency is true
     float freq;
+    // Offset (in Hz) to the midi note being played
+    //TODO float offset;
     // Bool
     int ampModOn;
     int phaseModOn;

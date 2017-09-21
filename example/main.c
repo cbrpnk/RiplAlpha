@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "../src/ripl.h"
 
+/*
 int main(int argc, char **argv)
 {
     RiplState riplState;
@@ -45,31 +46,41 @@ int main(int argc, char **argv)
     RiplCleanup(&riplState);
     return 0;
 }
+*/
 
 
-/*
+int main(int argc, char **argv)
+{
+    RiplState riplState;
+    RiplInit(&riplState);
+    
+    RiplNode *valvulaNode;
+    RiplMixerAddNode(&riplState, RIPL_MIXER_0, RIPL_NODE_VALVULA, &valvulaNode);
+    RiplValvula *valvula = (RiplValvula *) valvulaNode->params;
+    
     valvula->ops[RIPL_VALVULA_A].on = 1;
-    valvula->ops[RIPL_VALVULA_A].freq = 60.0f;
-    valvula->ops[RIPL_VALVULA_A].outputLevel = .5f;
+    // TODO: The frequency is set by the midi buffer
+    // there should be an option to lock to a specific freq +
+    // an offset option
+    valvula->ops[RIPL_VALVULA_A].freq = 1400.0f;
+    valvula->ops[RIPL_VALVULA_A].outputLevel = .8f;
     RiplValvulaModPhase(valvula, RIPL_VALVULA_B, RIPL_VALVULA_A, 0.05f);
     RiplValvulaModPhase(valvula, RIPL_VALVULA_D, RIPL_VALVULA_A, 0.4f);
     RiplValvulaModPhase(valvula, RIPL_VALVULA_E, RIPL_VALVULA_A, 0.4f);
     
     valvula->ops[RIPL_VALVULA_B].on = 1;
-    valvula->ops[RIPL_VALVULA_B].freq = 1.0f;
+    valvula->ops[RIPL_VALVULA_B].freq = 300.0f;
     valvula->ops[RIPL_VALVULA_B].level = .9f;
-    RiplValvulaModPhase(valvula, RIPL_VALVULA_A, RIPL_VALVULA_B, 0.9f);
-    RiplValvulaModPhase(valvula, RIPL_VALVULA_B, RIPL_VALVULA_B, 0.1f);
-    RiplValvulaModPhase(valvula, RIPL_VALVULA_D, RIPL_VALVULA_B, 0.5f);
+    RiplValvulaModPhase(valvula, RIPL_VALVULA_A, RIPL_VALVULA_B, .9f);
     
-    valvula->ops[RIPL_VALVULA_C].on = 1;
+    valvula->ops[RIPL_VALVULA_C].on = 0;
     valvula->ops[RIPL_VALVULA_C].freq = 1.0f;
     RiplValvulaModPhase(valvula, RIPL_VALVULA_A, RIPL_VALVULA_C, 0.2f);
     RiplValvulaModPhase(valvula, RIPL_VALVULA_B, RIPL_VALVULA_C, 0.5f);
     RiplValvulaModPhase(valvula, RIPL_VALVULA_D, RIPL_VALVULA_C, 0.5f);
     RiplValvulaModPhase(valvula, RIPL_VALVULA_E, RIPL_VALVULA_C, 0.5f);
     
-    valvula->ops[RIPL_VALVULA_D].on = 1;
+    valvula->ops[RIPL_VALVULA_D].on = 0;
     valvula->ops[RIPL_VALVULA_D].freq = 360.0f;
     valvula->ops[RIPL_VALVULA_D].outputLevel = .6f;
     RiplValvulaModPhase(valvula, RIPL_VALVULA_D, RIPL_VALVULA_D, 0.1f);
@@ -77,11 +88,43 @@ int main(int argc, char **argv)
     RiplValvulaModPhase(valvula, RIPL_VALVULA_B, RIPL_VALVULA_D, 0.01f);
     RiplValvulaModPhase(valvula, RIPL_VALVULA_E, RIPL_VALVULA_D, 0.03f);
     
-    valvula->ops[RIPL_VALVULA_E].on = 1;
+    valvula->ops[RIPL_VALVULA_E].on = 0;
     valvula->ops[RIPL_VALVULA_E].freq = 1200.0f;
     valvula->ops[RIPL_VALVULA_E].outputLevel = .5f;
     RiplValvulaModAmp(valvula, RIPL_VALVULA_B, RIPL_VALVULA_E, 0.05f);
-*/
+
+    // TODO: Remove me start
+    // Temporarly set midi buffer here
+    RiplMidiEvent *midiMess =
+                  riplState.mixer->channels[RIPL_MIXER_0].midiBuffer->events;
+    
+    riplState.mixer->channels[RIPL_MIXER_0].midiBuffer->nEvents = 2;
+    midiMess->delta = 0;
+    midiMess->eventType = RIPL_MIDI_NOTE_ON;
+    midiMess->channel = 0;
+    midiMess->param1 = 40;
+    midiMess->param2 = 64;
+    
+    /*
+    midiMess = (riplState.mixer->channels[RIPL_MIXER_0].midiBuffer->events)+1;
+    midiMess->delta = 0;
+    midiMess->eventType = RIPL_MIDI_NOTE_ON;
+    midiMess->channel = 0;
+    midiMess->param1 = 70;
+    midiMess->param2 = 64;
+    */
+    // TODO: Remove me end
+    
+    RiplPlay(&riplState);
+    for(;;) {
+        // TODO: Thread message passing here
+        // Interpret messages and change the Ripl state
+        sleep(1); // Seconds
+    }
+    
+    RiplCleanup(&riplState);
+    return 0;
+}
 
 
 /*

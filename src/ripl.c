@@ -10,7 +10,7 @@ int RiplInit(RiplState *state)
     state->dsp = malloc(sizeof(RiplDSP));
     state->bufferSize = 1024;
     state->playing = 0;
-    strncpy(state->jackBackend->name, "Headroom",
+    strncpy(state->jackBackend->name, "Ripl",
             sizeof(state->jackBackend->name));
     RiplMixerInit(state);
     RiplJackInit(state);

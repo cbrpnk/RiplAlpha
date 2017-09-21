@@ -9,7 +9,7 @@ typedef struct RiplState RiplState;
 typedef struct RiplMixerChannel RiplMixerChannel;
 
 typedef enum RiplNodeType {
-    RIPL_NODE_VALVULA, // Synth
+    RIPL_NODE_VALVULA,       // Synth
     RIPL_NODE_MIDI_PLAYER,
     RIPL_NODE_SAMPLER,
     RIPL_NODE_EQ,
@@ -26,7 +26,9 @@ typedef struct RiplNode {
     RiplNodeType type;
     // Bool
     int bypass;
-    // Pointer to struct a with specific data, like a reverbe for instance.
+    // Pointer to a struct with specific data that defines the node
+    // will be passed along with each call to the process function pointer
+    // below.
     void *params;
     // We have a function pointer to the function that should process the 
     // signal for this type of nodes. It is part of the the Node stuct becuase
@@ -59,7 +61,7 @@ typedef struct RiplMixerChannel {
     // Signal chain nodes, nodes are processed in the order they appear
     unsigned int nNodes;
     RiplNode *nodes;
-    // Nodes in this channel act on those buffers
+    // The Nodes in this channel act on those audioBuffer/midiBuffer.
     RiplAudioBuffer *audioBuffer;
     #define RIPL_MIXER_MIDI_BUFFER_SIZE 100
     RiplMidiBuffer *midiBuffer;

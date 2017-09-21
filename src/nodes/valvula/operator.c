@@ -21,7 +21,6 @@ int RiplValvulaOpParamsInit(RiplValvula *v, RiplValvulaOpParams *p)
     return 0;
 }
 
-
 int RiplValvulaOpStateInit(RiplValvula *v, RiplValvulaOpState *opState)
 {
     opState->phase = 0;
@@ -34,9 +33,8 @@ int RiplValvulaOpStateInit(RiplValvula *v, RiplValvulaOpState *opState)
 int RiplValvulaOpStateCleanup(RiplValvulaOpState *state)
 {
     RiplAudioBufferCleanup(&(state->buffer));
-
+    return 0;
 }
-
 
 int RiplValvulaOpProcess(RiplValvula *v, RiplValvulaVoice *voice, 
                          RiplValvulaOpName opName)
